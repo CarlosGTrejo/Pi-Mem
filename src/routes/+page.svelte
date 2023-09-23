@@ -6,20 +6,26 @@
     let guess = "";
     let correct = false;
     let strikes = 0;
+    let score = 1;
 
     function onKeyDown(e) {
-        guess = e.key;
-        check();
+        console.dir(e)
+        // check if key pressed is numeric (space bar ' ' is perceived as zero by isNaN)
+        if (e.code != 'Space' && !isNaN(e.key)) {
+            guess = e.key;
+            check();
+        }
     }
 
     function check() {
         if (strikes == 3) {
             digits = pi;
-        } else if (guess == pi[idx]) {
+        } else if (guess == pi[idx]) { // correct guess
             digits += guess;
             idx++;
+            score++;
             correct = true;
-        } else {
+        } else {  // incorrect
             correct = false;
             strikes++;
         }
@@ -27,9 +33,11 @@
 </script>
 
 <div class="content">
-    <b class="incorrect">Strike {strikes}</b>
-    <b class="incorrect" class:correct>{guess}</b>
-    <p>{digits}</p>
+    <h1 class='title'>Pi Mem</h1>
+    <p class='score'>Score: {score}</p>
+    <p class='pi'>{digits}</p>
+    <p class='guess incorrect' class:correct>{guess}</p>
+    <p class='strikes'>Strike {strikes}</p>
 </div>
 
 <svelte:window on:keydown={onKeyDown} />
@@ -37,19 +45,48 @@
 <style>
     .content {
         display: grid;
+        background-color: #F0EBD8;
+        height: 100vh;
         grid-template:
-            [strikes-start] "strikes" 1fr [strikes-end]
-            [guess-start] "guess" 2fr [guess-end]
-            [output-start] "output" 2fr [output-end]
-            / auto;
-        place-items: center;
+            [header-start]  "title . score" 1fr [header-end]
+            [pi-start]      "pi pi pi" 3fr [pi-end]
+            [guess-start]   " . guess ." 1fr [guess-end]
+            [strikes-start] " . strikes . " 1fr [strikes-end]
+            / 1fr 1fr 1fr;
+        font-family: sans-serif;
+        font-weight: bold;
+        font-size: 48px;
+        padding: 0.6em 1em;
+    }
+    .title {
+        font-size: 48px;
+        grid-area: title;
+        justify-self: start;
+        align-self: center;
+    }
+    .score {
+        grid-area: score;
+        justify-self: end;
+        align-self: center;
+    }
+    .strikes {
+        grid-area: strikes;
+        place-self: center;
+    }
+    .guess {
+        grid-area: guess;
+        min-height: 1em;
+        place-self: center;
+    }
+    .pi {
+        grid-area: pi;
+        white-space: normal;
     }
 
     .incorrect {
-        color: red;
+        color: #BC4749;
     }
-
     .correct {
-        color: green;
+        color: #6A994E;
     }
 </style>
